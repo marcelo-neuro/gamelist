@@ -30,4 +30,10 @@ public class GameController {
         GameDTO result = service.findById(id);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/list/{id}")
+    public ResponseEntity<List<GameDTO>> findByList(@PathVariable Long id) {
+        List<GameDTO> result = service.findByListId(id);
+        return ResponseEntity.ok(result);
+    }
 }
