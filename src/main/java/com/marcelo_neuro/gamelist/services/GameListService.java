@@ -2,12 +2,12 @@ package com.marcelo_neuro.gamelist.services;
 
 import com.marcelo_neuro.gamelist.dto.GameListDTO;
 import com.marcelo_neuro.gamelist.etities.Belonging;
-import com.marcelo_neuro.gamelist.etities.Game;
 import com.marcelo_neuro.gamelist.repositories.GameListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -23,29 +23,20 @@ public class GameListService {
                 .toList();
     }
 
-    // incompleto
     @Transactional
-    public List<Belonging> updatePosition(Long listId, Long gameID, Integer finalPosition) {
-        List<Belonging> belongings = repository.querry(listId);
+    public LinkedList<Belonging> updatePositions(Long listId, int gamePosition, int finalPosition) {
+        LinkedList<Belonging> belongings = repository.findBelongingByListId(listId);
 
-        Belonging game = belongings
-                .stream().filter(b -> b.getId().getGame().getId().equals(gameID))
-                .toList().getFirst();
+        Belonging target = belongings.remove(gamePosition);
+        belongings.add(finalPosition, target);
 
-        for (int i = 0; i < belongings.size() ; i++) {
+        int maxPosition = Math.max(gamePosition, finalPosition);
+        int minPosition = Math.min(gamePosition, finalPosition);
 
-            if(i < game.getPosition()) {
-                continue;
-            }
-
-            if(i > finalPosition + 1) {
-                break;
-            }
-
-            belongings.get(i).setPosition(belongings.get(i).getPosition() + 1);
-
-
+        for (int i = minPosition; i < maxPosition; i++) {
+            belongings.get(i).setPosition(i);
         }
-        return belongings;
+
+        return repository.findBelongingByListId(listId);
     }
 }

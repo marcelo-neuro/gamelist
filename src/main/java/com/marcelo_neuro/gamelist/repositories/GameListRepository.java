@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.LinkedList;
 
 @Repository
 public interface GameListRepository extends JpaRepository<GameList, Long> {
@@ -18,5 +18,12 @@ public interface GameListRepository extends JpaRepository<GameList, Long> {
             WHERE b.id.list.id = :listId
             ORDER BY b.position
             """)
-    List<Belonging> querry(Long listId);
+    LinkedList<Belonging> findBelongingByListId(Long listId);
+
+    @Query(value = """
+            UPDATE Belonging b
+            SET b.position = :newPosition
+            WHERE b.id.list.id = :listId AND b.id.game.id = :gameId
+            """)
+    void updateBelongingPosition(Long newPosition, Long listId, Long gameId);
 }
