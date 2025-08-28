@@ -24,9 +24,9 @@ public class GameListController {
     }
 
     @PostMapping("/{listId}/replace")
-    public ResponseEntity<List<Belonging>> updatePositions(@PathVariable Long listId,
+    public ResponseEntity<Void> updatePositions(@PathVariable Long listId,
                                                            @RequestBody ReplacementDTO replacementDTO) {
-        List<Belonging> result = service.updatePositions(listId, replacementDTO.getGamePosition(), replacementDTO.getFinalPosition());
-        return ResponseEntity.ok(result);
+        service.updatePositions(listId, replacementDTO.getGamePosition(), replacementDTO.getFinalPosition());
+        return ResponseEntity.noContent().build();
     }
 }

@@ -3,6 +3,7 @@ package com.marcelo_neuro.gamelist.repositories;
 import com.marcelo_neuro.gamelist.etities.Belonging;
 import com.marcelo_neuro.gamelist.etities.GameList;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -20,10 +21,11 @@ public interface GameListRepository extends JpaRepository<GameList, Long> {
             """)
     LinkedList<Belonging> findBelongingByListId(Long listId);
 
+    @Modifying
     @Query(value = """
             UPDATE Belonging b
             SET b.position = :newPosition
             WHERE b.id.list.id = :listId AND b.id.game.id = :gameId
             """)
-    void updateBelongingPosition(Long newPosition, Long listId, Long gameId);
+    void updateBelongingPosition(int newPosition, Long listId, Long gameId);
 }

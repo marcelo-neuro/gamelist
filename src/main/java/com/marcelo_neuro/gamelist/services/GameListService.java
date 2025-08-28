@@ -1,8 +1,9 @@
 package com.marcelo_neuro.gamelist.services;
 
 import com.marcelo_neuro.gamelist.dto.GameListDTO;
-import com.marcelo_neuro.gamelist.etities.Belonging;
+import com.marcelo_neuro.gamelist.etities.Game;
 import com.marcelo_neuro.gamelist.repositories.GameListRepository;
+import com.marcelo_neuro.gamelist.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,29 +15,30 @@ import java.util.List;
 public class GameListService {
 
     @Autowired
-    private GameListRepository repository;
+    private GameListRepository gameListRepository;
+
+    @Autowired
+    private GameRepository gameRepository;
 
     @Transactional
     public List<GameListDTO> findAll() {
-        return repository.findAll()
+        return gameListRepository.findAll()
                 .stream().map(GameListDTO::new)
                 .toList();
     }
 
     @Transactional
-    public LinkedList<Belonging> updatePositions(Long listId, int gamePosition, int finalPosition) {
-        LinkedList<Belonging> belongings = repository.findBelongingByListId(listId);
+    public void updatePositions(Long listId, int gamePosition, int finalPosition) {
+        LinkedList<Game> games = gameRepository.findByListId(listId);
 
-        Belonging target = belongings.remove(gamePosition);
-        belongings.add(finalPosition, target);
+        Game object = games.remove(gamePosition);
+        games.add(finalPosition, object);
 
-        int maxPosition = Math.max(gamePosition, finalPosition);
-        int minPosition = Math.min(gamePosition, finalPosition);
+        int maxPosition = Math.max(finalPosition, gamePosition);
+        int minPosition = Math.min(finalPosition, gamePosition);
 
-        for (int i = minPosition; i < maxPosition; i++) {
-            belongings.get(i).setPosition(i);
+        for (int i = minPosition; i <= maxPosition; i++) {
+            gameListRepository.updateBelongingPosition(i, listId, games.get(i).getId());
         }
-
-        return repository.findBelongingByListId(listId);
     }
 }

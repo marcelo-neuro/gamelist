@@ -15,9 +15,9 @@ public class Belonging {
 
     @EmbeddedId
     private BelongingPK id;
-    private Integer position;
+    private int position;
 
-    public Belonging(Game game, GameList list, Integer position) {
+    public Belonging(Game game, GameList list, int position) {
         this.id = new BelongingPK(game, list);
         this.position = position;
     }
